@@ -1,36 +1,19 @@
-export default function Services() {
-  const services = [
-    {
-      name: "Websites & apps",
-      detail: "Custom sites and web apps, deployed with post-launch care and PWA support.",
-      price: "From NPR 10,000"
-    },
-    {
-      name: "UI/UX & graphic design",
-      detail: "Interface design, logos, pamphlets, and brand assets.",
-      price: "Quoted per project"
-    },
-    {
-      name: "Digital marketing & SEO",
-      detail: "Search visibility, social media, and content built around what you sell.",
-      price: "Quoted per project"
-    },
-    {
-      name: "Hospitality marketing",
-      detail: "Booking-ready websites and social presence for hotels and restaurants.",
-      price: "Quoted per project"
-    },
-    {
-      name: "Govt. forms & DEMAT help",
-      detail: "Form filling for licenses, passports, and related applications, plus share market guidance.",
-      price: "Quoted per task"
-    },
-    {
-      name: "Cloud & domain setup",
-      detail: "Domain, hosting, and cloud configuration for your project.",
-      price: "Quoted per project"
-    }
-  ];
+import type { Metadata } from "next";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+
+export const metadata: Metadata = {
+  title: "Services — 1T1G",
+  description: "Development, design, digital marketing, and technology services from 1T1G.",
+};
+
+export const dynamic = "force-dynamic";
+
+export default async function Services() {
+  const services = await prisma.service.findMany({
+    where: { isActive: true },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+  });
 
   return (
     <main className="section container-narrow">
@@ -38,21 +21,35 @@ export default function Services() {
         Services
       </h1>
       <p className="mt-4 max-w-xl text-[16px] text-textMuted">
-        Every project starts with a short call to scope the work. Prices below
-        are starting points, not final quotes.
+        Every project starts with a short call to scope the work. Prices are
+        starting points, not final quotes.
       </p>
 
-      <div className="mt-12 divide-y divide-border border-t border-border">
-        {services.map((s) => (
-          <div key={s.name} className="flex flex-col justify-between gap-2 py-6 sm:flex-row sm:items-center">
-            <div>
-              <p className="text-[16px] font-medium">{s.name}</p>
-              <p className="mt-1 max-w-md text-[14px] text-textMuted">{s.detail}</p>
+      {services.length === 0 ? (
+        <p className="mt-12 rounded-2xl border border-border bg-surface p-6 text-sm text-textMuted">
+          Our services are being updated. Contact us and we’ll help with your project.
+        </p>
+      ) : (
+        <div className="mt-12 divide-y divide-border border-t border-border">
+          {services.map((service) => (
+            <div key={service.id} className="flex flex-col justify-between gap-3 py-6 sm:flex-row sm:items-center">
+              <div>
+                <p className="text-[16px] font-medium">{service.name}</p>
+                <p className="mt-1 max-w-md text-[14px] text-textMuted">{service.detail}</p>
+              </div>
+              <div className="flex items-center gap-5">
+                <p className="text-[14px] text-accent">{service.price}</p>
+                <Link
+                  href={`/contact?service=${encodeURIComponent(service.name)}`}
+                  className="text-[14px] font-medium text-text hover:text-accent"
+                >
+                  Ask us
+                </Link>
+              </div>
             </div>
-            <p className="text-[14px] text-accent">{s.price}</p>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </main>
   );
 }

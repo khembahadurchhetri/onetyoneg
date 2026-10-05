@@ -2,15 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: dark;
+  --color-bg: 9 14 24;
+  --color-bg-alt: 16 25 40;
+  --color-surface: 21 33 52;
+  --color-border: 42 58 79;
+  --color-accent: 56 189 248;
+  --color-accent-dim: 22 78 115;
+  --color-text: 244 247 251;
+  --color-text-muted: 177 190 207;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: 255 255 255;
+  --color-bg-alt: 245 248 252;
+  --color-surface: 255 255 255;
+  --color-border: 218 226 236;
+  --color-accent: 8 119 201;
+  --color-accent-dim: 13 93 145;
+  --color-text: 25 35 49;
+  --color-text-muted: 79 94 113;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #0B0F17;
-  color: #F5F6F8;
+  background-color: rgb(var(--color-bg));
+  color: rgb(var(--color-text));
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.hero-section {
+  background: rgb(9 14 24);
+}
+
+.hero-image {
+  opacity: 1;
+  transition: opacity 180ms ease;
+}
+
+.hero-overlay {
+  background-color: rgb(7 13 23 / 62%);
+}
+
+.hero-fade {
+  background-image: linear-gradient(
+    to bottom,
+    transparent 35%,
+    rgb(var(--color-bg)) 100%
+  );
+}
+
+:root[data-theme="light"] .hero-overlay {
+  background-color: rgb(255 255 255 / 35%);
+}
+
+:root[data-theme="light"] .hero-section {
+  background: rgb(255 255 255);
+}
+
+/* Image is no longer hidden in light mode */
+
+:root[data-theme="light"] .hero-fade {
+  background-image: linear-gradient(
+    to bottom,
+    transparent 35%,
+    rgb(var(--color-bg)) 100%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {

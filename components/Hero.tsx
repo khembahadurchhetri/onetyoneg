@@ -1,38 +1,84 @@
 "use client";
 
-import { motion } from "framer-motion";
+import Image from "next/image";
+import { useRef } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 
 export default function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, 72]);
+
   return (
-    <section className="section flex flex-col items-center px-6 pt-24 text-center sm:pt-32">
-      <motion.h1
-        initial={{ opacity: 0, scale: 1.05, filter: "blur(8px)" }}
-        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-3xl text-[44px] font-semibold leading-[1.05] tracking-tightest sm:text-[64px]"
+    <section
+      ref={ref}
+      className="hero-section relative isolate flex min-h-[620px] items-center justify-center overflow-hidden px-6 py-28 text-center sm:min-h-[720px]"
+    >
+      {/* One background image for both themes */}
+      <motion.div
+        aria-hidden="true"
+        style={{ y: reduceMotion ? 0 : backgroundY }}
+        className="hero-image pointer-events-none absolute inset-x-0 -inset-y-24 z-0"
       >
-        Build a brighter tomorrow
-      </motion.h1>
+        <Image
+          src="/hero.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </motion.div>
 
-      <motion.p
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        className="mt-5 max-w-xl text-[17px] text-textMuted sm:text-[19px]"
-      >
-        Development, design, marketing, and support &mdash; one remote team,
-        based in Nepal, working with clients anywhere.
-      </motion.p>
+      {/* These colors follow your existing theme */}
+      <div
+        aria-hidden="true"
+        className="hero-overlay pointer-events-none absolute inset-0 z-10"
+      />
 
-      <motion.a
-        href="/contact"
-        initial={{ opacity: 0, y: 8 }}
+      <div
+        aria-hidden="true"
+        className="hero-fade pointer-events-none absolute inset-0 z-10"
+      />
+
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
-        className="mt-9 rounded-full bg-accent px-6 py-3 text-[14px] font-medium text-white transition-transform hover:scale-[1.03]"
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-20 flex max-w-4xl flex-col items-center"
       >
-        Get a quote
-      </motion.a>
+        <p className="mb-5 text-xs font-medium uppercase tracking-[0.18em] text-accent">
+          One team. One goal.
+        </p>
+
+        <h1 className="max-w-3xl text-[44px] font-semibold leading-[1.05] tracking-tightest sm:text-[64px] lg:text-[72px]">
+          Build a brighter tomorrow
+        </h1>
+
+        <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-textMuted sm:text-[19px]">
+          Development, design, marketing, and support &mdash; one remote team,
+          based in Nepal, working with clients anywhere.
+        </p>
+
+        <a
+          href="/contact"
+          className="mt-9 inline-flex items-center gap-3 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-white transition-transform hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transform-none"
+        >
+          Let’s talk about your project
+          <span aria-hidden="true">↗</span>
+        </a>
+      </motion.div>
     </section>
   );
 }

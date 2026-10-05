@@ -1,6 +1,10 @@
 import ContactForm from "@/components/ContactForm";
 
-export default function Contact() {
+export default function Contact({
+  searchParams,
+}: {
+  searchParams: { course?: string; service?: string };
+}) {
   return (
     <main className="section container-narrow">
       <div className="mx-auto max-w-lg text-center">
@@ -21,7 +25,10 @@ export default function Contact() {
       </div>
 
       <div className="mx-auto mt-10 max-w-md">
-        <ContactForm />
+        <ContactForm
+          initialCourse={searchParams.course?.slice(0, 160)}
+          initialService={searchParams.service?.slice(0, 160)}
+        />
       </div>
     </main>
   );

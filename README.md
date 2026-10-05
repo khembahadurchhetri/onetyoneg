@@ -1,58 +1,88 @@
 # 1T1G website
 
-Next.js 14 (app router) + Tailwind + Prisma/Postgres, built for Vercel.
+Next.js 14 App Router, Tailwind, Prisma/Postgres, and Resend. The site and its
+admin API run together on Vercel; a separate Express/Render backend is not
+required.
 
 ## Run locally
 
-```
-npm install
-cp .env.example .env
-# fill DATABASE_URL in .env with a real Postgres connection string
-npx prisma migrate dev --name init
-npm run dev
+1. Install dependencies with `pnpm install` (or `npm install`).
+2. Copy `.env.example` to `.env` and fill in local PostgreSQL and email settings.
+3. Apply the local schema and seed the initial course/service catalog:
+
+   ```sh
+   npx prisma migrate dev
+   ```
+
+4. Start the site with `npm run dev`.
+
+## Admin setup
+
+The initial admin account is created on first successful login after the
+migration, using the environment values below. Generate a password hash in an
+interactive terminal; password input is hidden:
+
+```sh
+node scripts/hash-admin-password.mjs
 ```
 
-## Get a free Postgres database
+Set these values in Vercel Project Settings → Environment Variables (and in
+`.env` for local testing):
 
-Easiest path since you're deploying on Vercel: in your Vercel project,
-go to **Storage → Create Database → Postgres** (this uses Neon under the
-hood, has a free tier). It gives you a `DATABASE_URL` automatically —
-copy it into `.env` for local dev too.
+- `ADMIN_EMAIL`: the one admin login email.
+- `ADMIN_PASSWORD_HASH`: the output of the password-hash command. The initial
+  password must be at least 12 characters.
+- `ADMIN_SESSION_SECRET`: a unique random value of at least 32 characters. For
+  example, generate one with
+  `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`.
+
+Sign in at `/admin`. The panel manages the course and service catalogs, tracks
+contact/course inquiries and career applications, and lets the admin change
+their password. The initial login email comes from `ADMIN_EMAIL`; changing the
+password in the panel updates the database-stored password hash.
+
+## Email setup
+
+Set `RESEND_API_KEY` to the API key from Resend. Set `CONTACT_TO_EMAIL` to the
+inbox that should receive notifications. `RESEND_FROM_EMAIL` must use a sender
+domain verified with Resend in production. The default Resend test sender is
+only suitable for development/testing and may only deliver to an authorized
+recipient.
+
+Contact requests, course inquiries, and career applications are saved in
+Postgres and sent to the configured inbox. If the email provider is unavailable,
+the submission remains saved in the admin inbox and the submitter is told that
+the email notification could not be sent.
 
 ## Deploy to Vercel
 
-1. Push this folder to a GitHub repo.
-2. In Vercel: **Add New → Project**, import the repo.
-3. Add the `DATABASE_URL` environment variable (from the step above) in
-   Project Settings → Environment Variables.
-4. Deploy. Vercel runs `npm install` and `npm run build` (which also runs
-   `prisma generate`) automatically.
-5. After the first deploy, run the migration once against the production
-   database:
+1. Add `DATABASE_URL` and `DIRECT_URL` for the production Postgres database,
+   along with the Resend and admin environment variables above.
+2. The included `vercel.json` runs `npm run vercel-build`, which applies
+   pending Prisma migrations before building the app. Confirm the Vercel
+   project's Build Command is not overridden in Project Settings. The first
+   deployment therefore creates the admin and career-submission tables and
+   seeds the initial services and courses:
+
+   ```sh
+   npm run vercel-build
    ```
-   npx prisma migrate deploy
-   ```
-   (run this locally with `DATABASE_URL` pointed at production, or from
-   Vercel's CLI/terminal).
 
-## What to customize before launch
+   This command requires both production database URLs and is safe to run again
+   after later releases.
+3. Deploy the GitHub commit to Vercel, then sign in at `/admin`.
 
-- **Photos**: no stock photos were used on purpose (copyright risk +
-  looks generic). The service sections use abstract gradient panels —
-  swap `components/ServiceSection.tsx`'s visual block for real photos
-  of your team or work once you have them.
-- **Portfolio**: `app/portfolio/page.tsx` has placeholder descriptions
-  for Hamrobot and ShopCo — replace with real screenshots and copy.
-- **Domain**: once you buy a domain, add it in Vercel → Project →
-  Domains.
-- **Contact form data**: submissions land in the `Contact` table.
-  View them with `npx prisma studio` or query the database directly.
+Do not commit `.env` or paste production secrets into source control. Vercel
+project settings can override the repository build command; retain
+`npm run vercel-build` or configure an equivalent command that runs
+`prisma migrate deploy` before `next build`.
 
-## Structure
+## Submission storage
 
-```
-app/            pages (home, services, portfolio, careers, contact)
-app/api/contact route handler that saves form submissions to Postgres
-components/     Nav, Footer, Hero, ServiceSection, ContactForm, icons
-prisma/         database schema
-```
+- Website quotes and course inquiries are stored in `Contact`.
+- Career applications are stored in `CareerApplication`. Applicants can include
+  a CV or portfolio URL; file uploads are not enabled.
+- Course and service listings are editable in the admin panel and stored in
+  `Course` and `Service`.
+- Admin sign-in accounts are stored in `AdminAccount`; passwords are scrypt
+  hashes and sessions use an HTTP-only, same-site cookie.

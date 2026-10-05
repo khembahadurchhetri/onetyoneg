@@ -5,14 +5,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#0B0F17",
-        bgAlt: "#10151F",
-        surface: "#131826",
-        border: "#1F2635",
-        accent: "#1898F0",
-        accentDim: "#0E4C77",
-        text: "#F5F6F8",
-        textMuted: "#9AA1AC"
+        bg: "rgb(var(--color-bg) / <alpha-value>)",
+        bgAlt: "rgb(var(--color-bg-alt) / <alpha-value>)",
+        surface: "rgb(var(--color-surface) / <alpha-value>)",
+        border: "rgb(var(--color-border) / <alpha-value>)",
+        accent: "rgb(var(--color-accent) / <alpha-value>)",
+        accentDim: "rgb(var(--color-accent-dim) / <alpha-value>)",
+        text: "rgb(var(--color-text) / <alpha-value>)",
+        textMuted: "rgb(var(--color-text-muted) / <alpha-value>)"
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"]
