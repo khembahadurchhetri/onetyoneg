@@ -7,7 +7,7 @@ export default function Footer() {
           <a href="https://instagram.com/onetyoneg" className="hover:text-text">
             Instagram
           </a>
-          <a href="https://facebook.com/1T1G" className="hover:text-text">
+          <a href="https://www.facebook.com/profile.php?id=61593834707142" className="hover:text-text">
             Facebook
           </a>
           <a href="mailto:onetyoneg@gmail.com" className="hover:text-text">
