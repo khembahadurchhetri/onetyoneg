@@ -15,7 +15,15 @@ const config: Config = {
         textMuted: "rgb(var(--color-text-muted) / <alpha-value>)"
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"]
+        sans: [
+          "var(--font-sans)",
+          "ui-sans-serif",
+          "system-ui",
+          "-apple-system",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif"
+        ]
       },
       letterSpacing: {
         tightest: "-0.03em"

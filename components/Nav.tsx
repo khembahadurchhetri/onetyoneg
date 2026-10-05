@@ -32,7 +32,7 @@ export default function Nav() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-bg/70 backdrop-blur-md">
+    <header className="site-nav sticky top-0 z-50 border-b border-border/60 bg-bg/70 backdrop-blur-md">
       <div className="container-narrow flex h-14 items-center justify-between">
         <Link href="/" className="text-[15px] font-semibold tracking-tight text-text">
           1T1G

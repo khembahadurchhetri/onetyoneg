@@ -41,7 +41,7 @@ export default function Hero() {
         />
       </motion.div>
 
-      {/* These colors follow your existing theme */}
+      {/* Overlay + fade follow the theme (see globals.css) */}
       <div
         aria-hidden="true"
         className="hero-overlay pointer-events-none absolute inset-0 z-10"
@@ -58,15 +58,15 @@ export default function Hero() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-20 flex max-w-4xl flex-col items-center"
       >
-        <p className="mb-5 text-xs font-medium uppercase tracking-[0.18em] text-accent">
+        <p className="hero-eyebrow mb-5 text-xs font-medium uppercase tracking-[0.18em] text-accent">
           One team. One goal.
         </p>
 
-        <h1 className="max-w-3xl text-[44px] font-semibold leading-[1.05] tracking-tightest sm:text-[64px] lg:text-[72px]">
+        <h1 className="hero-title max-w-3xl text-[44px] font-semibold leading-[1.05] tracking-tightest sm:text-[64px] lg:text-[72px]">
           Build a brighter tomorrow
         </h1>
 
-        <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-textMuted sm:text-[19px]">
+        <p className="hero-lead mt-6 max-w-xl text-[17px] leading-relaxed text-textMuted sm:text-[19px]">
           Development, design, marketing, and support &mdash; one remote team,
           based in Nepal, working with clients anywhere.
         </p>

@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="border-t border-border/60">
+    <footer className="site-footer border-t border-border/60">
       <div className="container-narrow flex flex-col items-center gap-4 py-10 text-[13px] text-textMuted sm:flex-row sm:justify-between">
         <p>© {new Date().getFullYear()} 1T1G. One Team One Goal.</p>
         <div className="flex gap-5">
