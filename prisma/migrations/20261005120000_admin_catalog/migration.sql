@@ -1,6 +1,6 @@
-ALTER TABLE "Contact" ADD COLUMN "status" TEXT NOT NULL DEFAULT 'new';
+ALTER TABLE "Contact" ADD COLUMN IF NOT EXISTS "status" TEXT NOT NULL DEFAULT 'new';
 
-CREATE TABLE "CareerApplication" (
+CREATE TABLE IF NOT EXISTS "CareerApplication" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE "CareerApplication" (
     CONSTRAINT "CareerApplication_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE "Course" (
+CREATE TABLE IF NOT EXISTS "Course" (
     "id" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "category" TEXT NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE "Course" (
     CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE "Service" (
+CREATE TABLE IF NOT EXISTS "Service" (
     "id" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE "Service" (
     CONSTRAINT "Service_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE "AdminAccount" (
+CREATE TABLE IF NOT EXISTS "AdminAccount" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
@@ -49,9 +49,9 @@ CREATE TABLE "AdminAccount" (
     CONSTRAINT "AdminAccount_pkey" PRIMARY KEY ("id")
 );
 
-CREATE UNIQUE INDEX "Course_slug_key" ON "Course"("slug");
-CREATE UNIQUE INDEX "Service_slug_key" ON "Service"("slug");
-CREATE UNIQUE INDEX "AdminAccount_email_key" ON "AdminAccount"("email");
+CREATE UNIQUE INDEX IF NOT EXISTS "Course_slug_key" ON "Course"("slug");
+CREATE UNIQUE INDEX IF NOT EXISTS "Service_slug_key" ON "Service"("slug");
+CREATE UNIQUE INDEX IF NOT EXISTS "AdminAccount_email_key" ON "AdminAccount"("email");
 
 INSERT INTO "Course" ("id", "slug", "category", "title", "level", "price", "description", "topics", "updatedAt")
 VALUES
@@ -60,7 +60,8 @@ VALUES
     ('seed-course-fullstack', 'full-stack-web-development', 'Web development', 'Full-stack Web Development', 'Beginner to advanced', 'NPR 5,000', 'Follow a practical path from frontend interfaces to APIs, authentication, databases, and deployment.', ARRAY['MERN stack', 'Next.js', 'REST APIs', 'Authentication', 'React components', 'Deployment'], CURRENT_TIMESTAMP),
     ('seed-course-database', 'database-foundations', 'Data & databases', 'Database Foundations', 'Beginner to intermediate', 'NPR 5,000', 'Understand how to model, query, and connect application data using relational and document databases.', ARRAY['SQL fundamentals', 'MySQL', 'PostgreSQL', 'MongoDB', 'Schema design', 'Data in web apps'], CURRENT_TIMESTAMP),
     ('seed-course-cloud', 'cloud-devops-foundations', 'Cloud & operations', 'Cloud & DevOps Foundations', 'Beginner to intermediate', 'NPR 5,000', 'Get familiar with the tools and workflows used to ship, host, and maintain modern applications.', ARRAY['Linux basics', 'Git & GitHub', 'Docker', 'CI/CD', 'Cloud hosting', 'Monitoring & deployments'], CURRENT_TIMESTAMP),
-    ('seed-course-project', 'project-management-digital-teams', 'Product & delivery', 'Project Management for Digital Teams', 'Beginner to intermediate', 'NPR 5,000', 'Plan and coordinate digital projects, communicate clearly, and guide work from requirements to delivery.', ARRAY['Agile & Scrum', 'Requirements', 'Task planning', 'Jira & boards', 'Team communication', 'Project delivery'], CURRENT_TIMESTAMP);
+    ('seed-course-project', 'project-management-digital-teams', 'Product & delivery', 'Project Management for Digital Teams', 'Beginner to intermediate', 'NPR 5,000', 'Plan and coordinate digital projects, communicate clearly, and guide work from requirements to delivery.', ARRAY['Agile & Scrum', 'Requirements', 'Task planning', 'Jira & boards', 'Team communication', 'Project delivery'], CURRENT_TIMESTAMP)
+ON CONFLICT DO NOTHING;
 
 INSERT INTO "Service" ("id", "slug", "name", "detail", "price", "sortOrder", "updatedAt")
 VALUES
@@ -69,4 +70,5 @@ VALUES
     ('seed-service-marketing', 'digital-marketing-seo', 'Digital marketing & SEO', 'Search visibility, social media, and content built around what you sell.', 'Quoted per project', 2, CURRENT_TIMESTAMP),
     ('seed-service-hospitality', 'hospitality-marketing', 'Hospitality marketing', 'Booking-ready websites and social presence for hotels and restaurants.', 'Quoted per project', 3, CURRENT_TIMESTAMP),
     ('seed-service-forms', 'government-forms-demat', 'Govt. forms & DEMAT help', 'Form filling for licenses, passports, and related applications, plus share market guidance.', 'Quoted per task', 4, CURRENT_TIMESTAMP),
-    ('seed-service-cloud', 'cloud-domain-setup', 'Cloud & domain setup', 'Domain, hosting, and cloud configuration for your project.', 'Quoted per project', 5, CURRENT_TIMESTAMP);
+    ('seed-service-cloud', 'cloud-domain-setup', 'Cloud & domain setup', 'Domain, hosting, and cloud configuration for your project.', 'Quoted per project', 5, CURRENT_TIMESTAMP)
+ON CONFLICT DO NOTHING;
