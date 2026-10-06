@@ -4,6 +4,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 
 type CourseRecord = {
   id: string;
+  isActive: boolean;
   category: string;
   title: string;
   level: string;
@@ -14,6 +15,7 @@ type CourseRecord = {
 
 type ServiceRecord = {
   id: string;
+  isActive: boolean;
   name: string;
   detail: string;
   price: string;
@@ -53,6 +55,7 @@ export default function AdminCatalogManager({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [visibilityUpdatingId, setVisibilityUpdatingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -159,15 +162,36 @@ export default function AdminCatalogManager({
     }
   }
 
+  async function toggleVisibility(id: string, isActive: boolean) {
+    setVisibilityUpdatingId(id);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch(`/api/admin/${kind}/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: !isActive }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Could not update visibility.");
+      setNotice(isActive ? "Item unpublished." : "Item published.");
+      await loadItems();
+    } catch (visibilityError) {
+      setError(visibilityError instanceof Error ? visibilityError.message : "Could not update visibility.");
+    } finally {
+      setVisibilityUpdatingId(null);
+    }
+  }
+
   function changeField(field: keyof FormState, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
   }
 
   return (
-    <main className="section container-narrow">
+    <main className="admin-page">
       <header>
         <p className="text-sm font-medium text-accent">Admin catalog</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tightest">
+        <h1 className="mt-1 text-3xl font-semibold tracking-tightest">
           Manage {isCourses ? "courses" : "services"}
         </h1>
         <p className="mt-2 text-sm text-textMuted">
@@ -178,52 +202,80 @@ export default function AdminCatalogManager({
       {error && <p role="alert" className="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-500">{error}</p>}
       {notice && <p role="status" className="mt-6 rounded-xl border border-accent/30 bg-accent/10 p-4 text-sm text-accent">{notice}</p>}
 
-      <form onSubmit={save} className="mt-8 space-y-4 rounded-2xl border border-border bg-surface p-5 sm:p-7">
-        <h2 className="text-lg font-semibold">{editingId ? "Edit item" : `Add ${isCourses ? "a course" : "a service"}`}</h2>
-        {isCourses ? (
-          <>
-            <Field label="Course title" value={form.title} onChange={(value) => changeField("title", value)} required maxLength={160} />
-            <Field label="Category" value={form.category} onChange={(value) => changeField("category", value)} required maxLength={100} />
-            <Field label="Level" value={form.level} onChange={(value) => changeField("level", value)} required maxLength={100} placeholder="Beginner to intermediate" />
-            <Field label="Price" value={form.price} onChange={(value) => changeField("price", value)} required maxLength={100} placeholder="NPR 5,000" />
-            <TextArea label="Description" value={form.description} onChange={(value) => changeField("description", value)} required maxLength={2000} />
-            <Field label="Topics (comma-separated)" value={form.topics} onChange={(value) => changeField("topics", value)} required maxLength={2000} placeholder="Figma, Wireframes, Design systems" />
-          </>
-        ) : (
-          <>
-            <Field label="Service name" value={form.name} onChange={(value) => changeField("name", value)} required maxLength={160} />
-            <TextArea label="Description" value={form.detail} onChange={(value) => changeField("detail", value)} required maxLength={2000} />
-            <Field label="Price" value={form.price} onChange={(value) => changeField("price", value)} required maxLength={100} placeholder="Quoted per project" />
-          </>
-        )}
-        <div className="flex flex-wrap gap-3 pt-2">
-          <button type="submit" disabled={saving} className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60">
-            {saving ? "Saving…" : editingId ? "Save changes" : `Add ${isCourses ? "course" : "service"}`}
-          </button>
-          {editingId && <button type="button" onClick={resetForm} className="rounded-full border border-border px-5 py-2.5 text-sm text-text">Cancel</button>}
-        </div>
-      </form>
-
-      <section className="mt-10">
-        <h2 className="text-xl font-semibold">Published items</h2>
-        {loading ? <p className="mt-4 text-sm text-textMuted">Loading…</p> : (
-          <div className="mt-4 space-y-3">
-            {isCourses ? courses.map((course) => (
-              <article key={course.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4">
-                <div><h3 className="font-medium">{course.title}</h3><p className="mt-1 text-xs text-textMuted">{course.category} · {course.level} · {course.price}</p></div>
-                <ItemActions onEdit={() => editCourse(course)} onDelete={() => void remove(course.id)} />
-              </article>
-            )) : services.map((service) => (
-              <article key={service.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4">
-                <div><h3 className="font-medium">{service.name}</h3><p className="mt-1 text-xs text-textMuted">{service.price}</p></div>
-                <ItemActions onEdit={() => editService(service)} onDelete={() => void remove(service.id)} />
-              </article>
-            ))}
-            {isCourses && courses.length === 0 && <p className="text-sm text-textMuted">No courses yet.</p>}
-            {!isCourses && services.length === 0 && <p className="text-sm text-textMuted">No services yet.</p>}
+      <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)] xl:items-start">
+        <form onSubmit={save} className="space-y-4 rounded-2xl border border-border bg-surface p-5 sm:p-7">
+          <h2 className="text-lg font-semibold">{editingId ? "Edit item" : `Add ${isCourses ? "a course" : "a service"}`}</h2>
+          {isCourses ? (
+            <>
+              <Field label="Course title" value={form.title} onChange={(value) => changeField("title", value)} required maxLength={160} />
+              <Field label="Category" value={form.category} onChange={(value) => changeField("category", value)} required maxLength={100} />
+              <Field label="Level" value={form.level} onChange={(value) => changeField("level", value)} required maxLength={100} placeholder="Beginner to intermediate" />
+              <Field label="Price" value={form.price} onChange={(value) => changeField("price", value)} required maxLength={100} placeholder="NPR 5,000" />
+              <TextArea label="Description" value={form.description} onChange={(value) => changeField("description", value)} required maxLength={2000} />
+              <Field label="Topics (comma-separated)" value={form.topics} onChange={(value) => changeField("topics", value)} required maxLength={2000} placeholder="Figma, Wireframes, Design systems" />
+            </>
+          ) : (
+            <>
+              <Field label="Service name" value={form.name} onChange={(value) => changeField("name", value)} required maxLength={160} />
+              <TextArea label="Description" value={form.detail} onChange={(value) => changeField("detail", value)} required maxLength={2000} />
+              <Field label="Price" value={form.price} onChange={(value) => changeField("price", value)} required maxLength={100} placeholder="Quoted per project" />
+            </>
+          )}
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button type="submit" disabled={saving} className="min-h-11 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accentForeground transition-all hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60">
+              {saving ? "Saving…" : editingId ? "Save changes" : `Add ${isCourses ? "course" : "service"}`}
+            </button>
+            {editingId && <button type="button" onClick={resetForm} className="min-h-11 rounded-full border border-border px-5 py-2.5 text-sm text-text">Cancel</button>}
           </div>
-        )}
-      </section>
+        </form>
+
+        <section className="xl:sticky xl:top-8">
+          <h2 className="text-xl font-semibold">
+            Manage listings <span className="text-sm font-normal text-textMuted">({isCourses ? courses.length : services.length})</span>
+          </h2>
+          {loading ? <p className="mt-4 text-sm text-textMuted">Loading…</p> : (
+            <div className="mt-4 space-y-3">
+              {isCourses ? courses.map((course) => (
+                <article key={course.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-medium">{course.title}</h3>
+                          <VisibilityBadge isActive={course.isActive} />
+                        </div>
+                        <p className="mt-1 text-xs text-textMuted">{course.category} · {course.level} · {course.price}</p>
+                      </div>
+                      <ItemActions
+                        onEdit={() => editCourse(course)}
+                        onDelete={() => void remove(course.id)}
+                        onToggleVisibility={() => void toggleVisibility(course.id, course.isActive)}
+                        isActive={course.isActive}
+                        updating={visibilityUpdatingId === course.id}
+                      />
+                      </article>
+                    )) : services.map((service) => (
+                      <article key={service.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-surface p-4">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-medium">{service.name}</h3>
+                          <VisibilityBadge isActive={service.isActive} />
+                        </div>
+                        <p className="mt-1 text-xs text-textMuted">{service.price}</p>
+                      </div>
+                      <ItemActions
+                        onEdit={() => editService(service)}
+                        onDelete={() => void remove(service.id)}
+                        onToggleVisibility={() => void toggleVisibility(service.id, service.isActive)}
+                        isActive={service.isActive}
+                        updating={visibilityUpdatingId === service.id}
+                      />
+                      </article>
+                    ))}
+                    {isCourses && courses.length === 0 && <p className="text-sm text-textMuted">No courses yet.</p>}
+                    {!isCourses && services.length === 0 && <p className="text-sm text-textMuted">No services yet.</p>}
+            </div>
+          )}
+        </section>
+      </div>
     </main>
   );
 }
@@ -274,10 +326,33 @@ function TextArea({
   );
 }
 
-function ItemActions({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
+function VisibilityBadge({ isActive }: { isActive: boolean }) {
   return (
-    <div className="flex gap-3">
-      <button type="button" onClick={onEdit} className="text-sm text-accent hover:underline">Edit</button>
+    <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${isActive ? "bg-accent/10 text-accent" : "bg-bgAlt text-textMuted"}`}>
+      {isActive ? "Published" : "Unpublished"}
+    </span>
+  );
+}
+
+function ItemActions({
+  onEdit,
+  onDelete,
+  onToggleVisibility,
+  isActive,
+  updating,
+}: {
+  onEdit: () => void;
+  onDelete: () => void;
+  onToggleVisibility: () => void;
+  isActive: boolean;
+  updating: boolean;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <button type="button" onClick={onEdit} className="text-sm font-medium text-accent hover:underline">Edit</button>
+      <button type="button" onClick={onToggleVisibility} disabled={updating} className="text-sm text-textMuted hover:text-text disabled:opacity-60">
+        {updating ? "Updating…" : isActive ? "Unpublish" : "Publish"}
+      </button>
       <button type="button" onClick={onDelete} className="text-sm text-red-500 hover:underline">Delete</button>
     </div>
   );

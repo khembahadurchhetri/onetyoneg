@@ -4,36 +4,38 @@
 
 :root {
   color-scheme: dark;
-  --color-bg: 9 14 24;
-  --color-bg-alt: 16 25 40;
-  --color-surface: 21 33 52;
-  --color-border: 42 58 79;
-  --color-accent: 56 189 248;
-  --color-accent-dim: 22 78 115;
-  --color-text: 244 247 251;
-  --color-text-muted: 177 190 207;
+  --color-bg: 8 13 21;
+  --color-bg-alt: 13 23 34;
+  --color-surface: 20 33 46;
+  --color-border: 43 61 73;
+  --color-accent: 124 163 255;
+  --color-accent-dim: 50 89 170;
+  --color-accent-foreground: 13 27 58;
+  --color-text: 247 249 242;
+  --color-text-muted: 176 191 197;
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --color-bg: 255 255 255;
-  --color-bg-alt: 245 248 252;
+  --color-bg: 248 250 255;
+  --color-bg-alt: 239 244 255;
   --color-surface: 255 255 255;
-  --color-border: 218 226 236;
-  --color-accent: 8 119 201;
-  --color-accent-dim: 13 93 145;
-  --color-text: 25 35 49;
-  --color-text-muted: 79 94 113;
+  --color-border: 215 225 243;
+  --color-accent: 37 86 220;
+  --color-accent-dim: 30 64 175;
+  --color-accent-foreground: 255 255 255;
+  --color-text: 24 35 28;
+  --color-text-muted: 83 100 88;
 }
 
 :root[data-theme="light"] .site-nav {
-  background-color: rgb(235 242 249 / 96%);
-  border-bottom-color: rgb(203 215 228);
+  background-color: rgb(248 250 255 / 94%);
+  border-bottom-color: rgb(215 225 243);
 }
 
 :root[data-theme="light"] .site-footer {
-  background-color: rgb(235 242 249);
-  border-top-color: rgb(203 215 228);
+  background-color: rgb(239 244 255);
+  border-top-color: rgb(215 225 243);
 }
 
 html {
@@ -77,7 +79,9 @@ textarea {
 }
 
 .hero-overlay {
-  background-color: rgb(7 13 23 / 62%);
+  background:
+    radial-gradient(ellipse 80% 65% at 50% 45%, rgb(7 13 23 / 26%), rgb(7 13 23 / 48%)),
+    linear-gradient(to bottom, rgb(7 13 23 / 38%), rgb(7 13 23 / 58%));
 }
 
 /* ---------- HERO (light mode) ----------
@@ -113,9 +117,13 @@ textarea {
 }
 
 :root[data-theme="light"] .hero-eyebrow {
-  color: rgb(125 211 252);
+  color: rgb(169 196 255);
   font-weight: 600;
   text-shadow: 0 1px 8px rgb(0 0 0 / 45%);
+}
+
+:root[data-theme="light"] .hero-highlight {
+  color: rgb(169 196 255);
 }
 
 :root[data-theme="light"] .hero-title {
@@ -166,6 +174,34 @@ textarea {
   padding-right: 1.5rem;
 }
 
+.admin-page {
+  width: min(100%, 90rem);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
 :root[data-theme="light"] .hero-fade {
   display: none !important;
+}
+
+::selection {
+  color: rgb(var(--color-bg));
+  background: rgb(var(--color-accent) / 75%);
+}
+
+:focus-visible {
+  outline-color: rgb(var(--color-accent));
+}
+
+@media (max-width: 420px) {
+  .container-narrow {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .admin-page {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
 }

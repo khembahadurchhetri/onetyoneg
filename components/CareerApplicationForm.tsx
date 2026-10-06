@@ -72,7 +72,7 @@ export default function CareerApplicationForm({ roles }: { roles: string[] }) {
       </div>
       {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
       {message && <p role="status" className="text-sm text-accent">{message}</p>}
-      <button type="submit" disabled={loading} className="w-full rounded-full bg-accent py-3 text-sm font-medium text-white disabled:opacity-60">
+      <button type="submit" disabled={loading} className="w-full rounded-full bg-accent py-3 text-sm font-semibold text-accentForeground shadow-lg shadow-black/10 transition-all hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60">
         {loading ? "Submitting…" : "Submit application"}
       </button>
     </form>

@@ -18,7 +18,18 @@ export async function PATCH(
   if (unauthorized) return unauthorized;
   const body = await readJson(request);
   if (!body) return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
-
+  if (typeof body.isActive === "boolean" && Object.keys(body).length === 1) {
+    try {
+      const service = await prisma.service.update({
+        where: { id: params.id },
+        data: { isActive: body.isActive },
+      });
+      return NextResponse.json({ service });
+    } catch (error) {
+      console.error("Admin service visibility could not be updated:", error);
+      return NextResponse.json({ message: "Could not update service visibility." }, { status: 500 });
+    }
+  }
   const name = textField(body, "name", 160);
   const detail = textField(body, "detail", 2000);
   const price = textField(body, "price", 100);

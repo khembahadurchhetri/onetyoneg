@@ -44,20 +44,31 @@ export default function AdminAccountPage() {
   }
 
   return (
-    <main className="section container-narrow">
-      <h1 className="text-3xl font-semibold tracking-tightest">Admin account</h1>
+    <main className="admin-page">
+      <p className="text-sm font-medium text-accent">Security</p>
+      <h1 className="mt-1 text-3xl font-semibold tracking-tightest">Admin account</h1>
       <p className="mt-2 text-sm text-textMuted">Change the password for the admin account.</p>
-      <form onSubmit={handleSubmit} className="mt-8 max-w-xl space-y-5 rounded-2xl border border-border bg-surface p-5 sm:p-7">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,36rem)_minmax(16rem,1fr)] lg:items-start">
+      <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-border bg-surface p-5 sm:p-7">
         <PasswordField label="Current password" value={currentPassword} onChange={setCurrentPassword} autoComplete="current-password" />
         <PasswordField label="New password" value={newPassword} onChange={setNewPassword} autoComplete="new-password" />
         <PasswordField label="Confirm new password" value={confirmPassword} onChange={setConfirmPassword} autoComplete="new-password" />
         <p className="text-xs text-textMuted">Use at least 12 characters. Passwords are stored as scrypt hashes.</p>
         {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
         {success && <p role="status" className="text-sm text-accent">{success}</p>}
-        <button type="submit" disabled={loading} className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60">
+        <button type="submit" disabled={loading} className="min-h-11 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accentForeground transition-all hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60">
           {loading ? "Updating…" : "Update password"}
         </button>
       </form>
+      <aside className="rounded-2xl border border-border bg-bgAlt p-5 sm:p-6">
+        <h2 className="font-semibold text-text">Keep your account secure</h2>
+        <ul className="mt-4 space-y-3 text-sm leading-relaxed text-textMuted">
+          <li>Use a unique password you do not use on other sites.</li>
+          <li>A passphrase of four or more unrelated words is easier to remember and hard to guess.</li>
+          <li>Sign out when you finish using the admin area on a shared device.</li>
+        </ul>
+      </aside>
+      </div>
     </main>
   );
 }

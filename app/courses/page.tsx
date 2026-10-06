@@ -79,7 +79,7 @@ export default async function CoursesPage() {
                 <p className="text-sm font-semibold text-text">From {course.price}</p>
                 <Link
                   href={`/contact?course=${encodeURIComponent(course.title)}`}
-                  className="mt-4 inline-flex min-h-10 items-center justify-center rounded-full border border-border px-4 text-sm font-medium text-text transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                  className="mt-4 inline-flex min-h-10 items-center justify-center rounded-full border border-border bg-bgAlt px-4 text-sm font-semibold text-text transition-all hover:-translate-y-0.5 hover:border-accent hover:bg-accent hover:text-accentForeground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                 >
                   Ask about this course
                 </Link>

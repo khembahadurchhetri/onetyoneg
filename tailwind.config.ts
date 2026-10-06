@@ -11,6 +11,7 @@ const config: Config = {
         border: "rgb(var(--color-border) / <alpha-value>)",
         accent: "rgb(var(--color-accent) / <alpha-value>)",
         accentDim: "rgb(var(--color-accent-dim) / <alpha-value>)",
+        accentForeground: "rgb(var(--color-accent-foreground) / <alpha-value>)",
         text: "rgb(var(--color-text) / <alpha-value>)",
         textMuted: "rgb(var(--color-text-muted) / <alpha-value>)"
       },

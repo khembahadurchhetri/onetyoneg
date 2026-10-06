@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef } from "react";
+import { ArrowRight } from "lucide-react";
 import {
   motion,
   useReducedMotion,
@@ -23,7 +24,7 @@ export default function Hero() {
   return (
     <section
       ref={ref}
-      className="hero-section relative isolate flex min-h-[620px] items-center justify-center overflow-hidden px-6 py-28 text-center sm:min-h-[720px]"
+      className="hero-section relative isolate flex min-h-[620px] items-center justify-center overflow-hidden px-5 py-24 text-center sm:min-h-[720px] sm:px-6 sm:py-28"
     >
       {/* One background image for both themes */}
       <motion.div
@@ -58,26 +59,34 @@ export default function Hero() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-20 flex max-w-4xl flex-col items-center"
       >
-        <p className="hero-eyebrow mb-5 text-xs font-medium uppercase tracking-[0.18em] text-accent">
-          One team. One goal.
+        <p className="hero-eyebrow mb-5 text-xs font-semibold tracking-wide text-accent sm:text-sm">
+          A small team in Nepal, ready to help
         </p>
 
-        <h1 className="hero-title max-w-3xl text-[44px] font-semibold leading-[1.05] tracking-tightest sm:text-[64px] lg:text-[72px]">
-          Build a brighter tomorrow
+        <h1 className="hero-title max-w-3xl text-[clamp(2.75rem,10vw,5rem)] font-semibold leading-[1.02] tracking-tightest">
+          Got an idea? <span className="hero-highlight text-accent">Let’s build it.</span>
         </h1>
 
         <p className="hero-lead mt-6 max-w-xl text-[17px] leading-relaxed text-textMuted sm:text-[19px]">
-          Development, design, marketing, and support &mdash; one remote team,
-          based in Nepal, working with clients anywhere.
+          Tell us what you’re working on. We’ll help with the design, the tech,
+          and everything it takes to get it out into the world.
         </p>
 
-        <a
-          href="/contact"
-          className="mt-9 inline-flex items-center gap-3 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-white transition-transform hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transform-none"
-        >
-          Let’s talk about your project
-          <span aria-hidden="true">↗</span>
-        </a>
+        <div className="mt-9 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
+          <a
+            href="/contact"
+            className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accentForeground shadow-lg shadow-black/20 transition-all hover:-translate-y-1 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transform-none"
+          >
+            Let’s talk about your project
+            <ArrowRight aria-hidden="true" className="size-4" />
+          </a>
+          <a
+            href="/services"
+            className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/35 bg-white/10 px-6 py-3.5 text-sm font-medium text-white transition-colors hover:border-white/60 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          >
+            Explore what we do
+          </a>
+        </div>
       </motion.div>
     </section>
   );

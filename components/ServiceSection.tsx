@@ -8,8 +8,11 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 type ServiceSectionProps = {
+  id: string;
   eyebrow: string;
   title: string;
   description: string;
@@ -20,6 +23,7 @@ type ServiceSectionProps = {
 };
 
 export default function ServiceSection({
+  id,
   eyebrow,
   title,
   description,
@@ -40,7 +44,9 @@ export default function ServiceSection({
 
   return (
     <section
+      id={id}
       ref={ref}
+      style={{ scrollMarginTop: "6rem" }}
       className={`border-t border-border/60 ${
         reverse ? "bg-bgAlt" : "bg-bg"
       }`}
@@ -75,6 +81,14 @@ export default function ServiceSection({
               </li>
             ))}
           </ul>
+
+          <Link
+            href="/services"
+            className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-surface px-5 text-sm font-semibold text-text transition-all hover:-translate-y-0.5 hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+          >
+            Explore related services
+            <ArrowRight aria-hidden="true" className="size-4" />
+          </Link>
         </motion.div>
 
         <div className={reverse ? "sm:order-1" : ""}>

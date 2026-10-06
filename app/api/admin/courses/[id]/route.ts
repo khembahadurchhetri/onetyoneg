@@ -19,6 +19,18 @@ export async function PATCH(
 
   const body = await readJson(request);
   if (!body) return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
+  if (typeof body.isActive === "boolean" && Object.keys(body).length === 1) {
+    try {
+      const course = await prisma.course.update({
+        where: { id: params.id },
+        data: { isActive: body.isActive },
+      });
+      return NextResponse.json({ course });
+    } catch (error) {
+      console.error("Admin course visibility could not be updated:", error);
+      return NextResponse.json({ message: "Could not update course visibility." }, { status: 500 });
+    }
+  }
   const category = textField(body, "category", 100);
   const title = textField(body, "title", 160);
   const level = textField(body, "level", 100);

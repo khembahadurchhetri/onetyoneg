@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 
 const links = [
   { href: "/admin", label: "Inbox" },
@@ -39,8 +40,10 @@ export default function AdminSideBar() {
     <aside className="border-b border-border bg-surface px-5 py-5 lg:fixed lg:inset-y-0 lg:left-0 lg:w-72 lg:border-b-0 lg:border-r lg:px-6">
       <div className="flex items-center justify-between lg:block">
         <div>
-          <Link href="/" className="text-lg font-semibold text-text">1T1G</Link>
-          <p className="mt-1 text-xs text-textMuted">Admin workspace</p>
+          <Link href="/" aria-label="1T1G home" className="inline-flex items-center gap-3">
+            <Image src="/logo/1t1g-logo.jpg" alt="" width={40} height={40} className="size-10 rounded-xl object-cover" />
+            <span className="text-sm font-semibold text-text">Admin workspace</span>
+          </Link>
         </div>
         <button
           type="button"

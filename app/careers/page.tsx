@@ -24,7 +24,10 @@ export default function Careers() {
               <p className="text-[16px] font-medium">{r.name}</p>
               <p className="mt-1 text-[14px] text-textMuted">{r.detail}</p>
             </div>
-            <a href="#apply" className="text-[14px] text-accent hover:underline">
+            <a
+              href="#apply"
+              className="inline-flex min-h-10 items-center justify-center rounded-full border border-border bg-surface px-4 text-[13px] font-semibold text-text transition-all hover:-translate-y-0.5 hover:border-accent hover:bg-accent/10 hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            >
               Apply
             </a>
           </div>
