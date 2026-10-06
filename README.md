@@ -36,10 +36,14 @@ Set these values in Vercel Project Settings → Environment Variables (and in
   example, generate one with
   `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`.
 
-Sign in at `/admin`. The panel manages the course and service catalogs, tracks
-contact/course inquiries and career applications, and lets the admin change
-their password. The initial login email comes from `ADMIN_EMAIL`; changing the
-password in the panel updates the database-stored password hash.
+Sign in at `/admin`. The panel manages courses, services, and project cards;
+tracks contact/course inquiries and career applications; and lets the admin
+change their password. Project image uploads use Vercel Blob. Create a Blob
+store in the Vercel project and make its `BLOB_READ_WRITE_TOKEN` available to
+the deployment and local environment before uploading. Projects are saved to
+Postgres and appear on the homepage and Projects page. The initial login email
+comes from `ADMIN_EMAIL`; changing the password in the panel updates the
+database-stored password hash.
 
 ## Email setup
 
@@ -60,9 +64,9 @@ the email notification could not be sent.
    along with the Resend and admin environment variables above.
 2. The included `vercel.json` runs `npm run vercel-build`, which applies
    pending Prisma migrations before building the app. Confirm the Vercel
-   project's Build Command is not overridden in Project Settings. The first
-   deployment therefore creates the admin and career-submission tables and
-   seeds the initial services and courses:
+   project's Build Command is not overridden in Project Settings. Migrations
+   create the admin, career-submission, and project tables and seed the initial
+   services, courses, and existing portfolio projects:
 
    ```sh
    npm run vercel-build
@@ -84,5 +88,8 @@ project settings can override the repository build command; retain
   a CV or portfolio URL; file uploads are not enabled.
 - Course and service listings are editable in the admin panel and stored in
   `Course` and `Service`.
+- Projects are editable in the admin panel and stored in `Project`; new images
+  are kept in Vercel Blob, while the initial sample project images remain in
+  `public/projects`.
 - Admin sign-in accounts are stored in `AdminAccount`; passwords are scrypt
   hashes and sessions use an HTTP-only, same-site cookie.

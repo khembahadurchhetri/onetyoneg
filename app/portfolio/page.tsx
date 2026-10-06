@@ -1,102 +1,86 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
-const projects = [
-  {
-    name: "Hamrobot",
-    description: "A chat-based AI assistant interface.",
-    category: "AI assistant",
-    image: "/projects/chatbot.jpeg",
-    imageAlt: "Hamrobot AI assistant chat interface",
-    href: "https://hamrobot.vercel.app",
-  },
-  {
-    name: "ShopCo",
-    description: "A browsable product catalog and shopping experience.",
-    category: "E-commerce",
-    image: "/projects/ecommerce.jpeg",
-    imageAlt: "ShopCo product catalog website",
-    href: "https://product-catalog-q88b.vercel.app",
-  },
-  {
-    name: "Nexus Secure",
-    description: "A cybersecurity brand and visual identity concept.",
-    category: "Cybersecurity",
-    image: "/projects/cyber.jpg",
-    imageAlt: "Nexus Secure cybersecurity brand artwork",
-  },
-  {
-    name: "Byas Saving & Credit Co-operative",
-    description: "A logo created for Byas Saving & Credit Co-operative Ltd.",
-    category: "Brand identity",
-    image: "/projects/byas%20logo.png",
-    imageAlt: "Byas Saving & Credit Co-operative Ltd. logo",
-    contain: true,
-  },
-];
+export const metadata: Metadata = {
+  title: "Projects — 1T1G",
+  description: "Selected digital products and brand work by the 1T1G team.",
+};
 
-export default function Portfolio() {
+export const dynamic = "force-dynamic";
+
+export default async function Portfolio() {
+  const projects = await prisma.project.findMany({
+    where: { isActive: true },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+  });
+
   return (
     <main className="section container-narrow">
-      <h1 className="max-w-2xl text-[36px] font-semibold tracking-tightest sm:text-[46px]">
-        Portfolio
-      </h1>
-      <p className="mt-4 max-w-xl text-[16px] text-textMuted">
-        A selection of digital products and brand work from our team.
-      </p>
+      <header className="max-w-3xl">
+        <p className="text-sm font-semibold text-accent">Selected work</p>
+        <h1 className="mt-2 text-4xl font-semibold tracking-tightest sm:text-5xl">
+          Projects made with purpose.
+        </h1>
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-textMuted">
+          A selection of digital products and brand work from our team.
+        </p>
+      </header>
 
-      <div className="mt-12 grid gap-5 sm:grid-cols-2">
-        {projects.map((project) => {
-          const content = (
-            <>
-              <div className={`relative aspect-[16/9] overflow-hidden bg-bgAlt ${project.contain ? "bg-white p-6 sm:p-10" : ""}`}>
-                <Image
-                  src={project.image}
-                  alt={project.imageAlt}
-                  fill
-                  sizes="(max-width: 639px) 100vw, 50vw"
-                  className={`${project.contain ? "object-contain" : "object-cover"} transition-transform duration-500 group-hover:scale-[1.04]`}
-                />
-                {!project.contain && (
+      {projects.length === 0 ? (
+        <p className="mt-10 rounded-2xl border border-border bg-surface p-6 text-sm text-textMuted">
+          New projects are on the way. Get in touch to talk about what you are building.
+        </p>
+      ) : (
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {projects.map((project) => {
+            const content = (
+              <>
+                <div className="relative aspect-[16/9] overflow-hidden bg-bgAlt">
+                  <Image
+                    src={project.imageUrl}
+                    alt={project.imageAlt}
+                    fill
+                    unoptimized
+                    sizes="(max-width: 639px) 100vw, (max-width: 1279px) 50vw, 33vw"
+                    className={`${/brand|logo|identity/i.test(project.category) ? "bg-white object-contain p-6" : "object-cover"} transition-transform duration-500 group-hover:scale-105`}
+                  />
                   <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-                )}
-                <span className="absolute bottom-4 left-4 rounded-full border border-white/20 bg-black/55 px-3 py-1 text-xs font-medium text-white backdrop-blur">
-                  {project.category}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-4 p-5 sm:p-6">
-                <div>
-                  <h2 className="text-lg font-semibold text-text">{project.name}</h2>
-                  <p className="mt-1 text-sm leading-relaxed text-textMuted">{project.description}</p>
-                </div>
-                {project.href && (
-                  <span aria-hidden="true" className="shrink-0 text-lg text-textMuted transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent">
-                    ↗
+                  <span className="absolute bottom-3 left-3 rounded-full border border-white/20 bg-black/55 px-3 py-1 text-[11px] font-medium text-white backdrop-blur">
+                    {project.category}
                   </span>
-                )}
-              </div>
-            </>
-          );
+                </div>
+                <div className="flex min-h-24 items-center justify-between gap-3 p-4">
+                  <div className="min-w-0">
+                    <h2 className="truncate text-base font-semibold text-text">{project.title}</h2>
+                    <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-textMuted">{project.description}</p>
+                  </div>
+                  {project.projectUrl && (
+                    <ArrowUpRight aria-hidden="true" className="size-4 shrink-0 text-textMuted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
+                  )}
+                </div>
+              </>
+            );
+            const cardClass = "group block overflow-hidden rounded-2xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-xl hover:shadow-black/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent";
 
-          const className = "group block overflow-hidden rounded-2xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-xl hover:shadow-black/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent";
-
-          return project.href ? (
-            <Link
-              key={project.name}
-              href={project.href}
-              target="_blank"
-              rel="noreferrer"
-              className={className}
-            >
-              {content}
-            </Link>
-          ) : (
-            <article key={project.name} className={className}>
-              {content}
-            </article>
-          );
-        })}
-      </div>
+            return project.projectUrl ? (
+              <Link
+                key={project.id}
+                href={project.projectUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={cardClass}
+              >
+                {content}
+              </Link>
+            ) : (
+              <article key={project.id} className={cardClass}>{content}</article>
+            );
+          })}
+        </div>
+      )}
     </main>
   );
 }

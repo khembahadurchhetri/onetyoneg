@@ -1,10 +1,18 @@
 import Hero from "@/components/Hero";
 import ServiceSection from "@/components/ServiceSection";
+import ProjectRail from "@/components/ProjectRail";
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, ArrowUpRight, Check, MessageCircle, Rocket, Sparkles } from "lucide-react";
+import { ArrowRight, Check, MessageCircle, Rocket, Sparkles } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const projects = await prisma.project.findMany({
+    where: { isActive: true },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+  });
+
   return (
     <main>
       <Hero />
@@ -151,59 +159,11 @@ export default function Home() {
               href="/portfolio"
               className="inline-flex items-center gap-2 self-start text-sm font-semibold text-text transition-colors hover:text-accent sm:self-auto"
             >
-              Explore the portfolio <ArrowRight aria-hidden="true" className="size-4" />
+              All projects <ArrowRight aria-hidden="true" className="size-4" />
             </Link>
           </div>
 
-          <div className="mt-8 grid gap-5 sm:grid-cols-2">
-            {[
-              {
-                name: "Hamrobot",
-                description: "A live project by the 1T1G team.",
-                category: "Live project",
-                href: "https://hamrobot.vercel.app",
-                image: "/projects/chatbot.jpeg",
-                imageAlt: "Hamrobot AI assistant chat interface",
-              },
-              {
-                name: "ShopCo",
-                description: "A product catalog experience.",
-                category: "E-commerce",
-                href: "https://product-catalog-q88b.vercel.app",
-                image: "/projects/ecommerce.jpeg",
-                imageAlt: "ShopCo product catalog website",
-              },
-            ].map((project) => (
-              <Link
-                key={project.name}
-                href={project.href}
-                target="_blank"
-                rel="noreferrer"
-                className="group overflow-hidden rounded-2xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-xl hover:shadow-black/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-              >
-                <div className="relative flex aspect-[16/8] items-end overflow-hidden bg-bgAlt p-6 sm:p-8">
-                  <Image
-                    src={project.image}
-                    alt={project.imageAlt}
-                    fill
-                    sizes="(max-width: 639px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                  />
-                  <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                  <span className="relative rounded-full border border-border/70 bg-bg/75 px-3 py-1 text-xs font-medium text-text backdrop-blur">
-                    {project.category}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-4 p-6 sm:p-7">
-                  <div>
-                    <h3 className="text-lg font-semibold text-text">{project.name}</h3>
-                    <p className="mt-1 text-sm text-textMuted">{project.description}</p>
-                  </div>
-                  <ArrowUpRight aria-hidden="true" className="size-5 shrink-0 text-textMuted transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent" />
-                </div>
-              </Link>
-            ))}
-          </div>
+          <ProjectRail projects={projects} />
         </div>
       </section>
 

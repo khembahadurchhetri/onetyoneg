@@ -10,8 +10,10 @@ import {
 
 const siteLinks = [
   { href: "/services", label: "Services" },
-  { href: "/portfolio", label: "Our work" },
+  { href: "/portfolio", label: "Projects" },
   { href: "/courses", label: "Courses" },
+  { href: "/about", label: "About us" },
+  { href: "/blog", label: "Blogs" },
   { href: "/careers", label: "Careers" },
 ];
 

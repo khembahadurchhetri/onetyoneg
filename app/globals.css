@@ -174,6 +174,34 @@ textarea {
   padding-right: 1.5rem;
 }
 
+.project-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: project-marquee 42s linear infinite;
+}
+
+.project-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1rem;
+  padding-right: 1rem;
+}
+
+.project-marquee:hover .project-marquee-track,
+.project-marquee:focus-within .project-marquee-track {
+  animation-play-state: paused;
+}
+
+.project-marquee-track.is-paused {
+  animation-play-state: paused;
+}
+
+@keyframes project-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 .admin-page {
   width: min(100%, 90rem);
   margin-left: auto;
@@ -198,6 +226,25 @@ textarea {
   .container-narrow {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-marquee {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+    }
+
+    .project-marquee-track {
+      animation: none;
+    }
+
+    .project-marquee-group > * {
+      scroll-snap-align: start;
+    }
+
+    .project-marquee-copy {
+      display: none;
+    }
   }
 
   .admin-page {
